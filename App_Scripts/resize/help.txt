@@ -1,0 +1,7 @@
+﻿          <script>
+              $(function () {
+                $('table.resizable').resizableColumns();
+                //table-layout:fixed;
+              })
+
+          </script>

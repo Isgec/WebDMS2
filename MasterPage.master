@@ -1,0 +1,37 @@
+<%@ Master Language="VB" CodeFile="MasterPage.master.vb" Inherits="lgMasterPage" %>
+<!DOCTYPE html>
+<html lang="en">
+<head runat="server">
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ISGEC-DMS</title>
+  <link rel="SHORTCUT ICON" type="image/x-icon" runat="server" href="~/isgec.ico" />
+  <script src="/../UserRights/jq3.3/jquery-3.3.1.min.js"></script>
+  <link href="App_Resources/fa-5.9.0/css/all.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/../UserRights/bs4.0/css/bootstrap.min.css" />
+  <script src="/../UserRights/Popper1.0/Popper.min.js"></script>
+  <script src="/../UserRights/bs4.0/js/bootstrap.min.js"></script>
+  <asp:ContentPlaceHolder ID="cphMain" runat="server" EnableViewState="true">
+  </asp:ContentPlaceHolder>
+  <style>
+    body{
+      font-family:Tahoma;
+      font-size:14px;
+    }
+  </style>
+</head>
+<body>
+  <form id="form1" runat="server">
+    <asp:ScriptManager ID="ToolkitScriptManager1" EnableScriptGlobalization="true" runat="server" EnablePageMethods="true" AsyncPostBackTimeout="3600" EnableScriptLocalization="True" ScriptMode="Auto">
+      <Scripts>
+        <asp:ScriptReference Path="~/jq3.3/ui/webkit.js" />
+      </Scripts>
+    </asp:ScriptManager>
+    <asp:ContentPlaceHolder ID="cph1" runat="server"></asp:ContentPlaceHolder>
+  </form>
+</body>
+</html>

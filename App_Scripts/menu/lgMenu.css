@@ -1,0 +1,46 @@
+﻿.topnav .search {
+  float: right;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 4px 6px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+  .statusbar {
+    overflow: hidden;
+    background-color:black;
+    position: fixed;
+    height: 5%;
+    bottom: 0px;
+    width: 100%;
+  }
+
+.topnav {
+  overflow: hidden;
+  background-color:black;
+}
+
+.topnav a, .statusbar a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding:7px;
+  text-decoration: none;
+}
+
+.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.topnav .icon {
+  display: none;
+}
+
+.topnav a:hover {
+  background-color: #413f3f;
+  color: white;
+}

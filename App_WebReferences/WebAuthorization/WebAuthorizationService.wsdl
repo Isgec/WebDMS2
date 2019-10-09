@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="CreateWebAuthorization">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ApplID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="UsrID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="RolID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateWebAuthorizationResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CreateWebAuthorizationResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="CreateWebAuthorizationSoapIn">
+    <wsdl:part name="parameters" element="tns:CreateWebAuthorization" />
+  </wsdl:message>
+  <wsdl:message name="CreateWebAuthorizationSoapOut">
+    <wsdl:part name="parameters" element="tns:CreateWebAuthorizationResponse" />
+  </wsdl:message>
+  <wsdl:portType name="WebAuthorizationServiceSoap">
+    <wsdl:operation name="CreateWebAuthorization">
+      <wsdl:input message="tns:CreateWebAuthorizationSoapIn" />
+      <wsdl:output message="tns:CreateWebAuthorizationSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WebAuthorizationServiceSoap" type="tns:WebAuthorizationServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="CreateWebAuthorization">
+      <soap:operation soapAction="http://tempuri.org/CreateWebAuthorization" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WebAuthorizationServiceSoap12" type="tns:WebAuthorizationServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="CreateWebAuthorization">
+      <soap12:operation soapAction="http://tempuri.org/CreateWebAuthorization" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WebAuthorizationService">
+    <wsdl:port name="WebAuthorizationServiceSoap" binding="tns:WebAuthorizationServiceSoap">
+      <soap:address location="http://localhost/WebTools2/App_Services/WebAuthorizationService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="WebAuthorizationServiceSoap12" binding="tns:WebAuthorizationServiceSoap12">
+      <soap12:address location="http://localhost/WebTools2/App_Services/WebAuthorizationService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
