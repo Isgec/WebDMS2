@@ -428,6 +428,8 @@ Public Class dmsService
               End If
             End If
         End Select
+      Case "Extract BOM"
+        Return DoDefault()
     End Select
     Return New JavaScriptSerializer().Serialize(mRet)
   End Function

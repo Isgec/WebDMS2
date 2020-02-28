@@ -781,7 +781,7 @@ Namespace SIS.DMS
       Sql &= "   FROM [DMS_History]  "
       Sql &= "   LEFT OUTER JOIN [aspnet_users] AS [aspnet_users1] "
       Sql &= "     ON [DMS_History].[UserID] = [aspnet_users1].[LoginID] "
-      Sql &= "   INNER JOIN [aspnet_users] AS [aspnet_users2] "
+      Sql &= "   LEFT OUTER JOIN [aspnet_users] AS [aspnet_users2] "
       Sql &= "     ON [DMS_History].[CreatedBy] = [aspnet_users2].[LoginID] "
       Sql &= "   LEFT OUTER JOIN [DMS_History] AS [DMS_History3] "
       Sql &= "     ON [DMS_History].[ForwardLinkedItemID] = [DMS_History3].[ItemID] "

@@ -1337,7 +1337,7 @@ Namespace SIS.DMS.Handlers
       Sql &= "   FROM [DMS_Items]  "
       Sql &= "   LEFT OUTER JOIN [aspnet_users] AS [aspnet_users1] "
       Sql &= "     ON [DMS_Items].[UserID] = [aspnet_users1].[LoginID] "
-      Sql &= "   INNER JOIN [aspnet_users] AS [aspnet_users2] "
+      Sql &= "   LEFT OUTER JOIN [aspnet_users] AS [aspnet_users2] "
       Sql &= "     ON [DMS_Items].[CreatedBy] = [aspnet_users2].[LoginID] "
       Sql &= "   LEFT OUTER JOIN [DMS_Items] AS [DMS_Items3] "
       Sql &= "     ON [DMS_Items].[ForwardLinkedItemID] = [DMS_Items3].[ItemID] "

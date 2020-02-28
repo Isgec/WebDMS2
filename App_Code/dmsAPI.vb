@@ -339,14 +339,14 @@ Namespace SIS.DMS
             Case enumItemTypes.User
               Sql &= "   WHERE "
               Sql &= "       [DMS_Items].[ItemTypeID] = " & Type
-              Sql &= "   ORDER BY [DMS_Items].[ItemID] "
+              Sql &= "   ORDER BY [DMS_Items].[Description] "
             Case Else
               Sql &= "   left outer join dms_multiitems on dms_multiitems.MULTIITEMID = dms_items.itemid "
               Sql &= "   WHERE "
               Sql &= "       [DMS_MultiItems].[MultiTypeID] IN (" & enumMultiTypes.Authorized & "," & enumMultiTypes.Linked & "," & enumMultiTypes.Created & ")"
               Sql &= "   AND [DMS_MultiItems].[MultiItemTypeID]=" & Type
               Sql &= "   AND [DMS_MultiItems].[ItemID]=" & ID
-              Sql &= "   ORDER BY [DMS_Items].[ItemID] "
+              Sql &= "   ORDER BY [DMS_Items].[Description] "
           End Select
           Using Cmd As SqlCommand = Con.CreateCommand()
             Cmd.CommandType = CommandType.Text
@@ -399,13 +399,13 @@ Namespace SIS.DMS
               Sql &= "   INNER JOIN DMS_SearchResults on DMS_SearchResults.ItemID = DMS_Items.ItemID "
               Sql &= "   WHERE "
               Sql &= "       [DMS_SearchResults].[SearchID]=" & ID
-              Sql &= "   ORDER BY [DMS_Items].[ItemID] "
+              Sql &= "   ORDER BY [DMS_Items].[Description] "
             Case Else
               Sql &= " left outer join DMS_MultiItems on DMS_MultiItems.multiitemid=dms_items.itemid and DMS_MultiItems.MultiTypeID=" & enumMultiTypes.Child
               Sql &= " WHERE "
               Sql &= " dms_items.ParentItemID =" & ID
               Sql &= " or dms_multiitems.ItemID=" & ID
-              Sql &= "   ORDER BY [DMS_Items].[ItemTypeID],[DMS_Items].[ItemID] "
+              Sql &= "   ORDER BY [DMS_Items].[ItemTypeID],[DMS_Items].[Description] "
           End Select
           Using Cmd As SqlCommand = Con.CreateCommand()
             Cmd.CommandType = CommandType.Text

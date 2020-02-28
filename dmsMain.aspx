@@ -1136,14 +1136,15 @@
     dms_menuOption[23] = 'Remove Workflow';
     dms_menuOption[24] = 'Remove';
     dms_menuOption[25] = 'Remove All';
+    dms_menuOption[26] = 'Extract BOM';
 
     //Context Menu Options at ItemType
     //dms_type_menu[ItemType]=[dms_menuOption[<<Number>>],dms_menuOption[<<Number>>],....];
     var dms_type_menu = [];
     dms_type_menu[1] = [0,1,2,3,4,5,6,18,22,23];
     dms_type_menu[2] = [0,1,2,3,4,7,18];
-    dms_type_menu[3] = [8,9,2,10,11,12,13,14,18];
-    dms_type_menu[4] = [0,1,2,15,18];
+    dms_type_menu[3] = [8,9,2,10,11,12,13,14,18,26];
+    dms_type_menu[4] = [0,1,2,15,18,26];
     dms_type_menu[5] = [1,2,18];
     dms_type_menu[6] = [0,1,2,16,18];
     dms_type_menu[7] = [0,1,2];
@@ -1808,6 +1809,21 @@
           y = this.selectedHist;
         var z = new DmsNode(y);
         switch (x.options) {
+          case 'Extract BOM':
+            var mt = z.type + '|' + z.item;
+            var fd = $("#myFileDownload");
+
+            fd.modal('show');
+            var url = 'App_Downloads/dmsExtractBOM.aspx?mt=' + mt;
+            $.fileDownload(url, {
+              successCallback: function (url) {
+                fd.modal('hide');
+              },
+              failCallback: function (responseHtml, url) {
+                fd.modal('hide');
+              }
+            });
+            break;
           case 'Download Files':
           case 'Download':
             var mt = z.type + '|' + z.item;
