@@ -52,6 +52,10 @@ Namespace SIS.SYS.Utilities
         .Session("ApplicationID") = 103
         .Session("ApplicationDefaultPage") = "~/Default.aspx"
       End With
+      ejiVault.EJI.DBCommon.BaaNLive = Convert.ToBoolean(ConfigurationManager.AppSettings("BaaNLive"))
+      ejiVault.EJI.DBCommon.ERPCompany = "200"
+      ejiVault.EJI.DBCommon.IsLocalISGECVault = Convert.ToBoolean(ConfigurationManager.AppSettings("IsLocalISGECVault"))
+      ejiVault.EJI.DBCommon.ISGECVaultIP = ConfigurationManager.AppSettings("ISGECVaultIP")
     End Sub
     Public Shared Function ContentType(ByVal FileName As String) As String
       Dim mRet As String = "application/octet-stream"

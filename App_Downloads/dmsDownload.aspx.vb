@@ -4,6 +4,7 @@ Imports System.IO
 Imports System.Web.Script.Serialization
 Imports Ionic
 Imports Ionic.Zip
+Imports ejiVault
 Partial Class dmsDownload
   Inherits System.Web.UI.Page
   Private st As Long = HttpContext.Current.Server.ScriptTimeout
@@ -70,34 +71,23 @@ Partial Class dmsDownload
     ElseIf FileCount = 1 Then
       Response.Clear()
       If SIS.DMS.Handlers.Core.IsDownloadable(tmpItem) Then
-        Dim rDoc As SIS.EDI.ediAFile = SIS.EDI.ediAFile.ediAFileGetDCID(tmpItem.IsgecVaultID)
+        Dim rDoc As EJI.ediAFile = EJI.ediAFile.GetFileByFileID(tmpItem.IsgecVaultID)
         If rDoc IsNot Nothing Then
-          Dim rLib As SIS.EDI.ediALib = SIS.EDI.ediALib.ediALibGetByID(rDoc.t_lbcd)
+          Dim rLib As EJI.ediALib = EJI.ediALib.GetLibraryByID(rDoc.t_lbcd)
           If rLib IsNot Nothing Then
-            Dim NeedsMapping As Boolean = False
-            Dim Mapped As Boolean = False
-            Dim UrlAuthority As String = HttpContext.Current.Request.Url.Authority
-            If UrlAuthority.ToLower <> "cloud.isgec.co.in" Then
-              UrlAuthority = "192.9.200.146"
-              NeedsMapping = True
+            If Not EJI.DBCommon.IsLocalISGECVault Then
+              EJI.ediALib.ConnectISGECVault(rLib)
             End If
-            libPath = "D:\" & rLib.t_path
-            If NeedsMapping Then
-              libPath = "\\" & UrlAuthority & "\" & rLib.t_path
-              If ConnectToNetworkFunctions.connectToNetwork(libPath, "X:", "administrator", "Indian@12345") Then
-                Mapped = True
-              End If
-            End If
+            libPath = rLib.LibraryPath
             filePath = libPath & "\" & rDoc.t_dcid
             fileName = rDoc.t_fnam
             If IO.File.Exists(filePath) Then
-              Response.Clear()
               Response.AppendHeader("content-disposition", "attachment; filename=" & fileName)
               Response.ContentType = SIS.SYS.Utilities.ApplicationSpacific.ContentType(fileName)
               Response.WriteFile(filePath)
             End If
-            If Mapped Then
-              ConnectToNetworkFunctions.disconnectFromNetwork("X:")
+            If Not EJI.DBCommon.IsLocalISGECVault Then
+              EJI.ediALib.DisconnectISGECVault()
             End If
           End If
         End If
@@ -116,26 +106,20 @@ Partial Class dmsDownload
       Using zip As New ZipFile
         zip.CompressionLevel = Zlib.CompressionLevel.Level5
         Dim cnt As Integer = 0
+        Dim LibraryID As String = ""
         For Each tmp As SIS.DMS.dmsItems In tmpItems
           If Not SIS.DMS.Handlers.Core.IsDownloadable(tmp) Then Continue For
-          Dim rDoc As SIS.EDI.ediAFile = SIS.EDI.ediAFile.ediAFileGetDCID(tmp.IsgecVaultID)
+          Dim rDoc As EJI.ediAFile = EJI.ediAFile.GetFileByFileID(tmp.IsgecVaultID)
           If rDoc IsNot Nothing Then
-            Dim rLib As SIS.EDI.ediALib = SIS.EDI.ediALib.ediALibGetByID(rDoc.t_lbcd)
+            Dim rLib As EJI.ediALib = EJI.ediALib.GetLibraryByID(rDoc.t_lbcd)
             If rLib IsNot Nothing Then
-              Dim NeedsMapping As Boolean = False
-              Dim Mapped As Boolean = False
-              Dim UrlAuthority As String = HttpContext.Current.Request.Url.Authority
-              If UrlAuthority.ToLower <> "cloud.isgec.co.in" Then
-                UrlAuthority = "192.9.200.146"
-                NeedsMapping = True
-              End If
-              libPath = "D:\" & rLib.t_path
-              If NeedsMapping Then
-                libPath = "\\" & UrlAuthority & "\" & rLib.t_path
-                If ConnectToNetworkFunctions.connectToNetwork(libPath, "X:", "administrator", "Indian@12345") Then
-                  Mapped = True
+              If LibraryID <> rDoc.t_lbcd Then
+                If Not EJI.DBCommon.IsLocalISGECVault Then
+                  EJI.ediALib.ConnectISGECVault(rLib)
                 End If
+                LibraryID = rDoc.t_lbcd
               End If
+              libPath = rLib.LibraryPath
               filePath = libPath & "\" & rDoc.t_dcid
               fileName = rDoc.t_fnam
               If IO.File.Exists(filePath) Then
@@ -149,13 +133,13 @@ Partial Class dmsDownload
                   Exit For
                 End If
               End If
-              If Mapped Then
-                ConnectToNetworkFunctions.disconnectFromNetwork("X:")
-              End If
             End If
           End If
         Next
         zip.Save(Response.OutputStream)
+        If Not EJI.DBCommon.IsLocalISGECVault Then
+          EJI.ediALib.DisconnectISGECVault()
+        End If
       End Using
       'For Each str As String In tmpFilesToDelete
       '  Try

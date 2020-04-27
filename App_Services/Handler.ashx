@@ -6,7 +6,7 @@ Imports System.IO
 Imports System.Net
 Imports System.Web
 Imports System.Web.Script.Serialization
-
+Imports ejiVault
 Public Class Handler : Implements IHttpHandler, IRequiresSessionState
 
   Public Sub ProcessRequest(ByVal context As HttpContext) Implements IHttpHandler.ProcessRequest
@@ -51,24 +51,13 @@ Public Class Handler : Implements IHttpHandler, IRequiresSessionState
         Dim ItemID As Integer = Req.dmsID.Split("_".ToCharArray)(1)
         Dim usr As SIS.DMS.dmsItems = SIS.DMS.dmsItems.dmsItemsGetByID(ItemID)
 
-        Dim LibFolder As String = "attachmentlibrary1"
         Dim libPath As String = ""
-        Dim NeedsMapping As Boolean = False
         Dim LibraryID As String = ""
-        Dim tmp As SIS.EDI.ediALib = SIS.EDI.ediALib.GetActiveLibrary
-        LibFolder = tmp.t_path
+        Dim tmp As EJI.ediALib = EJI.ediALib.GetActiveLibrary
+        libPath = tmp.LibraryPath
         LibraryID = tmp.t_lbcd
-        Dim UrlAuthority As String = HttpContext.Current.Request.Url.Authority
-        If UrlAuthority.ToLower <> "cloud.isgec.co.in" Then
-          UrlAuthority = "192.9.200.146"
-          NeedsMapping = True
-        End If
-        libPath = "D:\" & LibFolder
-        If NeedsMapping Then
-          libPath = "\\" & UrlAuthority & "\" & LibFolder
-          If ConnectToNetworkFunctions.connectToNetwork(libPath, "X:", "administrator", "Indian@12345") Then
-            Mapped = True
-          End If
+        If Not EJI.DBCommon.IsLocalISGECVault Then
+          EJI.ediALib.ConnectISGECVault(tmp)
         End If
         Dim tmpPath As String = HttpContext.Current.Server.MapPath("~/../App_Temp")
         Dim tmpFilesToDelete As New ArrayList
@@ -91,7 +80,7 @@ Public Class Handler : Implements IHttpHandler, IRequiresSessionState
           fCount = fCount + 1
 
           Dim LibPDFFile As String = ""
-          LibPDFFile = SIS.EDI.ediASeries.GetNextFileName
+          LibPDFFile = EJI.ediASeries.GetNextFileID
 
           Dim tmpItm As New SIS.DMS.dmsItems
           With tmpItm
@@ -122,12 +111,13 @@ Public Class Handler : Implements IHttpHandler, IRequiresSessionState
           tmpItm = SIS.DMS.dmsItems.InsertData(tmpItm)
 
 
-          Dim tmpVault As SIS.EDI.ediAFile = New SIS.EDI.ediAFile
+          Dim tmpVault As EJI.ediAFile = New EJI.ediAFile
           With tmpVault
+            .t_drid = EJI.ediASeries.GetNextRecordID
             .t_dcid = LibPDFFile
             .t_hndl = tmpItm.AthHandle
             .t_indx = tmpItm.AthIndex
-            .t_prcd = tmpItm.AthProcess
+            .t_prcd = "EJIMAIN"
             .t_fnam = IO.Path.GetFileName(fu.FileName)
             .t_lbcd = LibraryID
             .t_atby = usr.UserID
@@ -135,7 +125,7 @@ Public Class Handler : Implements IHttpHandler, IRequiresSessionState
             .t_Refcntd = 0
             .t_Refcntu = 0
           End With
-          tmpVault = SIS.EDI.ediAFile.InsertData(tmpVault)
+          tmpVault = EJI.ediAFile.InsertData(tmpVault)
           Try
             If IO.File.Exists(libPath & "\" & LibPDFFile) Then
               IO.File.Delete(libPath & "\" & LibPDFFile)
@@ -148,13 +138,13 @@ Public Class Handler : Implements IHttpHandler, IRequiresSessionState
         'For Each str As String In tmpFilesToDelete
         '  IO.File.Delete(str)
         'Next
-        If Mapped Then
-          ConnectToNetworkFunctions.disconnectFromNetwork("X:")
+        If Not EJI.DBCommon.IsLocalISGECVault Then
+          EJI.ediALib.DisconnectISGECVault()
         End If
       End If
     Catch ex As Exception
-      If Mapped Then
-        ConnectToNetworkFunctions.disconnectFromNetwork("X:")
+      If Not EJI.DBCommon.IsLocalISGECVault Then
+        EJI.ediALib.DisconnectISGECVault()
       End If
       isErr = True
       errMsg = ex.Message
