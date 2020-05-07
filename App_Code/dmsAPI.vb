@@ -184,8 +184,8 @@ Namespace SIS.DMS
         tr.ID = Req.Target & "_" & ID
         tr.ClientIDMode = ClientIDMode.Static
         tr.CssClass = "dms-row"
-        tr.Attributes.Add("onclick", "return dmsScript.treeRowClicked(this,event);")
-        tr.Attributes.Add("oncontextmenu", "return dmsScript.showTreeMenu(this,event);")
+        tr.Attributes.Add("onclick", "return dmsScript.tRC(this,event);")
+        tr.Attributes.Add("oncontextmenu", "return dmsScript.sTM(this,event);")
         tr.Attributes.Add("data-base", Req.Base)
         tr.Attributes.Add("data-indent", Req.Indent)
         tr.Attributes.Add("data-expended", Req.Expended)
@@ -213,6 +213,7 @@ Namespace SIS.DMS
         td = New TableCell
         td.Attributes.Add("style", "border-collapse:collapse;border:none;padding:2px;")
         td.Text = GetIconHTML(tmpItm.ItemTypeID, tmpItm.Description)
+        '        td.Text = "<script>return getIconHTML('" & tmpItm.ItemTypeID & "','" & tmpItm.Description & "');</script>"
         iTbl.Rows(0).Cells.Add(td)
 
         'Get Associated Items

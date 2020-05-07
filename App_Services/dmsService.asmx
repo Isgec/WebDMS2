@@ -58,7 +58,10 @@ Public Class dmsService
   Public Function LoadRoot(ByVal context As String) As String
     If Not ValidateSession() Then Return SessionExpired()
     Dim mRet As SIS.DMS.UI.apiResponse = SIS.DMS.UI.Core.strTree(dmsUser.ItemID, context)
-    Return New JavaScriptSerializer().Serialize(mRet)
+    Dim jxx As New JavaScriptSerializer()
+    jxx.MaxJsonLength = Integer.MaxValue
+    Dim x As String = jxx.Serialize(mRet)
+    Return x
   End Function
 #End Region
 #Region " LoadAny "

@@ -1432,7 +1432,8 @@
         });
 
       },
-      treeRowClicked: function (t, e) {
+      //treeRowClicked
+      tRC: function (t, e) {
         if (t != this.selectedTree){
           this.treeSelectionChanged = true;
           try { this.selectedTree.classList.remove('dms-selected'); } catch (e) { }
@@ -1727,7 +1728,8 @@
         this.gridRowClicked(t, e);
         mnuScript.showMenu(t);
       },
-      showTreeMenu: function (t, e) {
+      //showTreeMenu
+      sTM: function (t, e) {
         var x = new DmsNode(t);
         if (x.base == 'User' && x.parent == 'trRoot') {
           //No context menu
