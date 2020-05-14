@@ -1,13 +1,19 @@
 ﻿
-<%@ WebHandler Language="VB" Class="dmsUploader"  %>
+<%@ WebService Language="VB" Class="---dmsUploaderM"  %>
 
 Imports System
 Imports System.IO
 Imports System.Net
 Imports System.Web
+Imports System.Web.Services
+Imports System.Web.Services.Protocols
 Imports System.Web.Script.Serialization
 Imports ejiVault
-Public Class dmsUploader : Implements IHttpHandler, IRequiresSessionState
+
+<System.Web.Script.Services.ScriptService()>
+<WebService(Namespace:="http://tempuri.org/")>
+<WebServiceBinding(ConformsTo:=WsiProfiles.BasicProfile1_1)>
+Public Class =====dmsUploaderM : Implements IHttpHandler, IRequiresSessionState
 
   Public Sub ProcessRequest(ByVal context As HttpContext) Implements IHttpHandler.ProcessRequest
     If Convert.ToBoolean(ConfigurationManager.AppSettings("JoomlaLive")) Then

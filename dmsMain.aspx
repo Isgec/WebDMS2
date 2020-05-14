@@ -2111,6 +2111,9 @@
               cache: false,
               contentType: false,
               processData: false,
+              error: function(xhr,status,error){
+                alert("An error occured: " + xhr.status + " " + xhr.statusText);
+              },
               success: function (data, status, xhr) {
                 if (data.err) {
                   this.failed(data.msg)
@@ -2138,13 +2141,14 @@
       },
       fileUploading:function(e){
         if (e.lengthComputable) {
-          var s = parseInt((e.loaded / e.total) * 100);
+          var s = 0;
+          try{s=parseInt((e.loaded / e.total) * 100);}catch(e){}
           $("#ctPBar_"+dmsScript.ctProgress).width(s + "%");
           $("#ctPBar_"+dmsScript.ctProgress).text(s + " %");
         }
       },
       fileUploaded: function (y) {
-        $("#ctMsg_" + this.ctProgress).html("<b>" + y.msg + "</b>");
+        try{$("#ctMsg_" + this.ctProgress).html("<b>" + y.msg + "</b>");}catch(e){}
         this.FilesToUpload[this.ctProgress].uploaded = true;
         this.startUpload();
       },
