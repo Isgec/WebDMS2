@@ -1141,8 +1141,8 @@
     //Context Menu Options at ItemType
     //dms_type_menu[ItemType]=[dms_menuOption[<<Number>>],dms_menuOption[<<Number>>],....];
     var dms_type_menu = [];
-    dms_type_menu[1] = [0,1,2,3,4,5,6,18,22,23];
-    dms_type_menu[2] = [0,1,2,3,4,7,18];
+    dms_type_menu[1] = [0,1,2,3,4,5,6,18,22,23,26];
+    dms_type_menu[2] = [0,1,2,3,4,7,18,26];
     dms_type_menu[3] = [8,9,2,10,11,12,13,14,18,26];
     dms_type_menu[4] = [0,1,2,15,18,26];
     dms_type_menu[5] = [1,2,18];

@@ -390,4 +390,80 @@ Namespace SIS.DMISG
     Public Sub New()
     End Sub
   End Class
+  <DataObject()>
+  Public Class TDocs
+    Public Property DocumentID As String = ""
+    Public Property RevisionNo As String = ""
+    Public Property EnggFunc As String = ""
+    Public Shared Function GetDocs(ByVal prj As String, ByVal eFun As String, Optional Comp As String = "200") As List(Of SIS.DMISG.TDocs)
+      Dim Sql As String = ""
+
+      Sql &= " Select distinct td.t_docn As DocumentID,td.t_revn as RevisionNo, th.t_tfld As EnggFunc "
+      Sql &= " From tdmisg132200 As td "
+      Sql &= " inner Join tdmisg131200 as th on td.t_tran=th.t_tran "
+      Sql &= " where "
+      Sql &= "     th.t_issu = '007' "
+      Sql &= " And th.t_type = 4 "
+      Sql &= " And th.t_ofbp='SUPI00002' "
+      Sql &= " And th.t_stat = 5 "
+      Sql &= " And td.t_revn = (select max(xx.t_revn) from tdmisg132200 as xx where xx.t_docn=td.t_docn) "
+      If eFun <> "" Then
+        Sql &= " And th.t_tfld = (select t_srno as srno from tdmisg015200 where t_type=4 And t_cprj='" & prj & "' and t_tfid=" & eFun & ") "
+      End If
+      Sql &= " And th.t_dprj='" & prj & "' "
+      Sql &= " Order By th.t_tfld "
+
+      Dim tmp As New List(Of SIS.DMISG.TDocs)
+
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetBaaNConnectionString())
+        Con.Open()
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.Text
+          Cmd.CommandText = Sql
+          Dim rd As SqlDataReader = Cmd.ExecuteReader
+          While rd.Read
+            tmp.Add(New SIS.DMISG.TDocs(rd))
+          End While
+        End Using
+      End Using
+      Return tmp
+    End Function
+    Public Sub New(ByVal Reader As SqlDataReader)
+      Try
+        For Each pi As System.Reflection.PropertyInfo In Me.GetType.GetProperties
+          If pi.MemberType = Reflection.MemberTypes.Property Then
+            Try
+              Dim Found As Boolean = False
+              For I As Integer = 0 To Reader.FieldCount - 1
+                If Reader.GetName(I).ToLower = pi.Name.ToLower Then
+                  Found = True
+                  Exit For
+                End If
+              Next
+              If Found Then
+                If Convert.IsDBNull(Reader(pi.Name)) Then
+                  Select Case Reader.GetDataTypeName(Reader.GetOrdinal(pi.Name))
+                    Case "decimal"
+                      CallByName(Me, pi.Name, CallType.Let, "0.00")
+                    Case "bit"
+                      CallByName(Me, pi.Name, CallType.Let, Boolean.FalseString)
+                    Case Else
+                      CallByName(Me, pi.Name, CallType.Let, String.Empty)
+                  End Select
+                Else
+                  CallByName(Me, pi.Name, CallType.Let, Reader(pi.Name))
+                End If
+              End If
+            Catch ex As Exception
+            End Try
+          End If
+        Next
+      Catch ex As Exception
+      End Try
+    End Sub
+    Public Sub New()
+    End Sub
+
+  End Class
+
 End Namespace
