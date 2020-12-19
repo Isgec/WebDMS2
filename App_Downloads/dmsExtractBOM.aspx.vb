@@ -53,7 +53,6 @@ Partial Class dmsExtractBOM
         End If
     End Select
     Try
-
       If IsTransmittal Then
         tmpItems = SIS.DMS.Handlers.dmsData.GetChildFiles(dmsItem)
         If tmpItem IsNot Nothing Then tmpItems.Add(tmpItem)
@@ -96,16 +95,25 @@ Partial Class dmsExtractBOM
             If DownloadName = "" Then
               DownloadName = DocumentID & ".xlsx"
             End If
+
+            Dim tmpDoc As SIS.DMISG.BOM = SIS.DMISG.BOM.GetDoc(DocumentID, dmtmp.RevisionNo)
+            With xlWS
+              c = 1
+              .Cells(r, c).Value = tmpDoc.DocumentID
+              c += 1
+              .Cells(r, c).Value = tmpDoc.RevisionNo
+              c += 1
+              .Cells(r, c).Value = tmpDoc.Title
+              c += 1
+              .Cells(r, c).Value = tmpDoc.DocWeight
+              c += 1
+              .Cells(r, c).Value = "Kg"
+              r += 1
+            End With
             Dim tmpBoms As List(Of SIS.DMISG.BOM) = SIS.DMISG.BOM.GetBOM(DocumentID, dmtmp.RevisionNo)
             For Each tmp As SIS.DMISG.BOM In tmpBoms
               With xlWS
-                c = 1
-                .Cells(r, c).Value = tmp.DocumentID
-                c += 1
-                .Cells(r, c).Value = tmp.RevisionNo
-                c += 1
-                .Cells(r, c).Value = tmp.Title
-                c += 1
+                c = 6
                 .Cells(r, c).Value = tmp.ItemID
                 c += 1
                 .Cells(r, c).Value = tmp.ItemDescription
@@ -117,33 +125,33 @@ Partial Class dmsExtractBOM
                 .Cells(r, c).Value = tmp.ItemUnit
                 c += 1
                 .Cells(r, c).Value = ""
-                c += 1
-                .Cells(r, c).Value = tmp.PartItemID
-                c += 1
-                .Cells(r, c).Value = tmp.PartDescription
-                c += 1
-                .Cells(r, c).Value = tmp.PartSpecification
-                c += 1
-                .Cells(r, c).Value = tmp.PartSize
-                c += 1
-                .Cells(r, c).Value = tmp.PartQuantity
-                c += 1
-                .Cells(r, c).Value = tmp.PartWeight
-                c += 1
-                .Cells(r, c).Value = tmp.PartRemarks
+                r += 1
               End With
-              r += 1
+              Dim tmpPBoms As List(Of SIS.DMISG.BOM) = SIS.DMISG.BOM.GetPBOM(DocumentID, dmtmp.RevisionNo, tmp.SrNo)
+              For Each ptmp As SIS.DMISG.BOM In tmpPBoms
+                With xlWS
+                  c = 12
+                  .Cells(r, c).Value = ptmp.PartItemID
+                  c += 1
+                  .Cells(r, c).Value = ptmp.PartDescription
+                  c += 1
+                  .Cells(r, c).Value = ptmp.PartSpecification
+                  c += 1
+                  .Cells(r, c).Value = ptmp.PartSize
+                  c += 1
+                  .Cells(r, c).Value = ptmp.PartQuantity
+                  c += 1
+                  .Cells(r, c).Value = ptmp.PartWeight
+                  c += 1
+                  .Cells(r, c).Value = ptmp.PartRemarks
+                  r += 1
+                End With
+              Next
             Next
             Dim tmpRefBoms As List(Of SIS.DMISG.BOM) = SIS.DMISG.BOM.GetRefBOM(DocumentID, dmtmp.RevisionNo)
             For Each tmp As SIS.DMISG.BOM In tmpRefBoms
               With xlWS
-                c = 1
-                .Cells(r, c).Value = tmp.DocumentID
-                c += 1
-                .Cells(r, c).Value = tmp.RevisionNo
-                c += 1
-                .Cells(r, c).Value = tmp.Title
-                c += 1
+                c = 6
                 .Cells(r, c).Value = tmp.ItemID
                 c += 1
                 .Cells(r, c).Value = tmp.ItemDescription
@@ -155,31 +163,33 @@ Partial Class dmsExtractBOM
                 .Cells(r, c).Value = tmp.ItemUnit
                 c += 1
                 .Cells(r, c).Value = ""
-                c += 1
-                .Cells(r, c).Value = tmp.PartItemID
-                c += 1
-                .Cells(r, c).Value = tmp.PartDescription
-                c += 1
-                .Cells(r, c).Value = tmp.PartSpecification
-                c += 1
-                .Cells(r, c).Value = tmp.PartSize
-                c += 1
-                .Cells(r, c).Value = tmp.PartQuantity
-                c += 1
-                .Cells(r, c).Value = tmp.PartWeight
-                c += 1
-                .Cells(r, c).Value = tmp.PartRemarks
+                r += 1
               End With
-              r += 1
+              Dim tmpRefPBoms As List(Of SIS.DMISG.BOM) = SIS.DMISG.BOM.GetRefPBOM(DocumentID, dmtmp.RevisionNo, tmp.SrNo)
+              For Each ptmp As SIS.DMISG.BOM In tmpRefPBoms
+                With xlWS
+                  c = 12
+                  .Cells(r, c).Value = ptmp.PartItemID
+                  c += 1
+                  .Cells(r, c).Value = ptmp.PartDescription
+                  c += 1
+                  .Cells(r, c).Value = ptmp.PartSpecification
+                  c += 1
+                  .Cells(r, c).Value = ptmp.PartSize
+                  c += 1
+                  .Cells(r, c).Value = ptmp.PartQuantity
+                  c += 1
+                  .Cells(r, c).Value = ptmp.PartWeight
+                  c += 1
+                  .Cells(r, c).Value = ptmp.PartRemarks
+                End With
+                r += 1
+              Next
             Next
-
           Next
-
-
 
           xlPk.Save()
           xlPk.Dispose()
-
 
           Response.Clear()
           Response.Cache.SetCacheability(HttpCacheability.NoCache)
@@ -210,16 +220,24 @@ Partial Class dmsExtractBOM
         Dim tmpDocs As List(Of SIS.DMISG.TDocs) = SIS.DMISG.TDocs.GetDocs(Project, EnggFunc)
 
         For Each doc As SIS.DMISG.TDocs In tmpDocs
+          Dim tmpDoc As SIS.DMISG.BOM = SIS.DMISG.BOM.GetDoc(doc.DocumentID, doc.RevisionNo)
+          With xlWS
+            c = 1
+            .Cells(r, c).Value = tmpDoc.DocumentID
+            c += 1
+            .Cells(r, c).Value = tmpDoc.RevisionNo
+            c += 1
+            .Cells(r, c).Value = tmpDoc.Title
+            c += 1
+            .Cells(r, c).Value = tmpDoc.DocWeight
+            c += 1
+            .Cells(r, c).Value = "Kg"
+            r += 1
+          End With
           Dim tmpBoms As List(Of SIS.DMISG.BOM) = SIS.DMISG.BOM.GetBOM(doc.DocumentID, doc.RevisionNo)
           For Each tmp As SIS.DMISG.BOM In tmpBoms
             With xlWS
-              c = 1
-              .Cells(r, c).Value = tmp.DocumentID
-              c += 1
-              .Cells(r, c).Value = tmp.RevisionNo
-              c += 1
-              .Cells(r, c).Value = tmp.Title
-              c += 1
+              c = 6
               .Cells(r, c).Value = tmp.ItemID
               c += 1
               .Cells(r, c).Value = tmp.ItemDescription
@@ -231,33 +249,33 @@ Partial Class dmsExtractBOM
               .Cells(r, c).Value = tmp.ItemUnit
               c += 1
               .Cells(r, c).Value = ""
-              c += 1
-              .Cells(r, c).Value = tmp.PartItemID
-              c += 1
-              .Cells(r, c).Value = tmp.PartDescription
-              c += 1
-              .Cells(r, c).Value = tmp.PartSpecification
-              c += 1
-              .Cells(r, c).Value = tmp.PartSize
-              c += 1
-              .Cells(r, c).Value = tmp.PartQuantity
-              c += 1
-              .Cells(r, c).Value = tmp.PartWeight
-              c += 1
-              .Cells(r, c).Value = tmp.PartRemarks
+              r += 1
             End With
-            r += 1
+            Dim tmpPBoms As List(Of SIS.DMISG.BOM) = SIS.DMISG.BOM.GetPBOM(doc.DocumentID, doc.RevisionNo, tmp.SrNo)
+            For Each ptmp As SIS.DMISG.BOM In tmpPBoms
+              With xlWS
+                c = 12
+                .Cells(r, c).Value = ptmp.PartItemID
+                c += 1
+                .Cells(r, c).Value = ptmp.PartDescription
+                c += 1
+                .Cells(r, c).Value = ptmp.PartSpecification
+                c += 1
+                .Cells(r, c).Value = ptmp.PartSize
+                c += 1
+                .Cells(r, c).Value = ptmp.PartQuantity
+                c += 1
+                .Cells(r, c).Value = ptmp.PartWeight
+                c += 1
+                .Cells(r, c).Value = ptmp.PartRemarks
+                r += 1
+              End With
+            Next
           Next
           Dim tmpRefBoms As List(Of SIS.DMISG.BOM) = SIS.DMISG.BOM.GetRefBOM(doc.DocumentID, doc.RevisionNo)
           For Each tmp As SIS.DMISG.BOM In tmpRefBoms
             With xlWS
-              c = 1
-              .Cells(r, c).Value = tmp.DocumentID
-              c += 1
-              .Cells(r, c).Value = tmp.RevisionNo
-              c += 1
-              .Cells(r, c).Value = tmp.Title
-              c += 1
+              c = 6
               .Cells(r, c).Value = tmp.ItemID
               c += 1
               .Cells(r, c).Value = tmp.ItemDescription
@@ -269,24 +287,29 @@ Partial Class dmsExtractBOM
               .Cells(r, c).Value = tmp.ItemUnit
               c += 1
               .Cells(r, c).Value = ""
-              c += 1
-              .Cells(r, c).Value = tmp.PartItemID
-              c += 1
-              .Cells(r, c).Value = tmp.PartDescription
-              c += 1
-              .Cells(r, c).Value = tmp.PartSpecification
-              c += 1
-              .Cells(r, c).Value = tmp.PartSize
-              c += 1
-              .Cells(r, c).Value = tmp.PartQuantity
-              c += 1
-              .Cells(r, c).Value = tmp.PartWeight
-              c += 1
-              .Cells(r, c).Value = tmp.PartRemarks
+              r += 1
             End With
-            r += 1
+            Dim tmpRefPBoms As List(Of SIS.DMISG.BOM) = SIS.DMISG.BOM.GetRefPBOM(doc.DocumentID, doc.RevisionNo, tmp.SrNo)
+            For Each ptmp As SIS.DMISG.BOM In tmpRefPBoms
+              With xlWS
+                c = 12
+                .Cells(r, c).Value = ptmp.PartItemID
+                c += 1
+                .Cells(r, c).Value = ptmp.PartDescription
+                c += 1
+                .Cells(r, c).Value = ptmp.PartSpecification
+                c += 1
+                .Cells(r, c).Value = ptmp.PartSize
+                c += 1
+                .Cells(r, c).Value = ptmp.PartQuantity
+                c += 1
+                .Cells(r, c).Value = ptmp.PartWeight
+                c += 1
+                .Cells(r, c).Value = ptmp.PartRemarks
+              End With
+              r += 1
+            Next
           Next
-
         Next
         xlPk.Save()
         xlPk.Dispose()
@@ -316,3 +339,82 @@ Partial Class dmsExtractBOM
   End Sub
 
 End Class
+'For Each doc As SIS.DMISG.TDocs In tmpDocs
+'Dim tmpBoms As List(Of SIS.DMISG.BOM) = SIS.DMISG.BOM.GetBOM(doc.DocumentID, doc.RevisionNo)
+'For Each tmp As SIS.DMISG.BOM In tmpBoms
+'With xlWS
+'c = 1
+'.Cells(r, c).Value = tmp.DocumentID
+'c += 1
+'.Cells(r, c).Value = tmp.RevisionNo
+'c += 1
+'.Cells(r, c).Value = tmp.Title
+'c += 1
+'.Cells(r, c).Value = tmp.ItemID
+'c += 1
+'.Cells(r, c).Value = tmp.ItemDescription
+'c += 1
+'.Cells(r, c).Value = tmp.ItemQuantity
+'c += 1
+'.Cells(r, c).Value = tmp.ItemWeight
+'c += 1
+'.Cells(r, c).Value = tmp.ItemUnit
+'c += 1
+'.Cells(r, c).Value = ""
+'c += 1
+'.Cells(r, c).Value = tmp.PartItemID
+'c += 1
+'.Cells(r, c).Value = tmp.PartDescription
+'c += 1
+'.Cells(r, c).Value = tmp.PartSpecification
+'c += 1
+'.Cells(r, c).Value = tmp.PartSize
+'c += 1
+'.Cells(r, c).Value = tmp.PartQuantity
+'c += 1
+'.Cells(r, c).Value = tmp.PartWeight
+'c += 1
+'.Cells(r, c).Value = tmp.PartRemarks
+'End With
+'r += 1
+'Next
+'Dim tmpRefBoms As List(Of SIS.DMISG.BOM) = SIS.DMISG.BOM.GetRefBOM(doc.DocumentID, doc.RevisionNo)
+'For Each tmp As SIS.DMISG.BOM In tmpRefBoms
+'With xlWS
+'c = 1
+'.Cells(r, c).Value = tmp.DocumentID
+'c += 1
+'.Cells(r, c).Value = tmp.RevisionNo
+'c += 1
+'.Cells(r, c).Value = tmp.Title
+'c += 1
+'.Cells(r, c).Value = tmp.ItemID
+'c += 1
+'.Cells(r, c).Value = tmp.ItemDescription
+'c += 1
+'.Cells(r, c).Value = tmp.ItemQuantity
+'c += 1
+'.Cells(r, c).Value = tmp.ItemWeight
+'c += 1
+'.Cells(r, c).Value = tmp.ItemUnit
+'c += 1
+'.Cells(r, c).Value = ""
+'c += 1
+'.Cells(r, c).Value = tmp.PartItemID
+'c += 1
+'.Cells(r, c).Value = tmp.PartDescription
+'c += 1
+'.Cells(r, c).Value = tmp.PartSpecification
+'c += 1
+'.Cells(r, c).Value = tmp.PartSize
+'c += 1
+'.Cells(r, c).Value = tmp.PartQuantity
+'c += 1
+'.Cells(r, c).Value = tmp.PartWeight
+'c += 1
+'.Cells(r, c).Value = tmp.PartRemarks
+'End With
+'r += 1
+'Next
+
+'Next

@@ -6,9 +6,11 @@ Imports System.ComponentModel
 Namespace SIS.DMISG
   <DataObject()>
   Public Class BOM
+    Public Property DocWeight As Decimal = 0.00
     Public Property DocumentID As String = ""
     Public Property RevisionNo As String = ""
     Public Property Title As String = ""
+    Public Property SrNo As String = ""
     Public Property ItemID As String = ""
     Public Property ItemDescription As String = ""
     Public Property ItemQuantity As Decimal = 0.00
@@ -21,7 +23,84 @@ Namespace SIS.DMISG
     Public Property PartQuantity As Decimal = 0.00
     Public Property PartWeight As Decimal = 0.00
     Public Property PartRemarks As String = ""
+    Public Shared Function GetDoc(ByVal docn As String, ByVal revn As String, Optional Comp As String = "200") As SIS.DMISG.BOM
+      Dim Sql As String = ""
+      Sql &= " select top 1  "
+      Sql &= "   dm.t_wght as DocWeight, "
+      Sql &= "   dm.t_docn as DocumentID, "
+      Sql &= "   dm.t_revn as RevisionNo, "
+      Sql &= "   dm.t_dttl as Title "
+      Sql &= " from tdmisg001" & Comp & " as dm  "
+      Sql &= " where dm.t_docn = '" & docn & "' and dm.t_revn='" & revn & "' "
+      Dim tmp As SIS.DMISG.BOM = Nothing
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetBaaNConnectionString())
+        Con.Open()
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.Text
+          Cmd.CommandText = Sql
+          Dim rd As SqlDataReader = Cmd.ExecuteReader
+          If rd.Read Then
+            tmp = New SIS.DMISG.BOM(rd)
+          End If
+        End Using
+      End Using
+      Return tmp
+    End Function
     Public Shared Function GetBOM(ByVal docn As String, ByVal revn As String, Optional Comp As String = "200") As List(Of SIS.DMISG.BOM)
+      Dim Sql As String = ""
+      Sql &= " select  "
+      Sql &= "   it.t_srno as SrNo, "
+      Sql &= "   it.t_item as ItemID, "
+      Sql &= "   it.t_dsca as ItemDescription, "
+      Sql &= "   it.t_qnty as ItemQuantity, "
+      Sql &= "   it.t_wght as ItemWeight, "
+      Sql &= "   it.t_cuni as ItemUnit "
+      Sql &= " from tdmisg002" & Comp & " as it  "
+      Sql &= " where it.t_docn = '" & docn & "' and it.t_revn='" & revn & "' "
+      Dim tmp As New List(Of SIS.DMISG.BOM)
+
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetBaaNConnectionString())
+        Con.Open()
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.Text
+          Cmd.CommandText = Sql
+          Dim rd As SqlDataReader = Cmd.ExecuteReader
+          While rd.Read
+            tmp.Add(New SIS.DMISG.BOM(rd))
+          End While
+        End Using
+      End Using
+      Return tmp
+    End Function
+    Public Shared Function GetPBOM(ByVal docn As String, ByVal revn As String, ByVal srno As String, Optional Comp As String = "200") As List(Of SIS.DMISG.BOM)
+      Dim Sql As String = ""
+      Sql &= " select  "
+      Sql &= "   pt.t_prtn as PartItemID, "
+      Sql &= "   pt.t_prtd as PartDescription, "
+      Sql &= "   pt.t_spec as PartSpecification, "
+      Sql &= "   pt.t_size as PartSize, "
+      Sql &= "   pt.t_qnty as PartQuantity, "
+      Sql &= "   pt.t_wght as PartWeight,  "
+      Sql &= "   pt.t_rmrk as PartRemarks  "
+      Sql &= " from tdmisg004" & Comp & " as pt  "
+      Sql &= " where pt.t_docn = '" & docn & "' and pt.t_revn='" & revn & "' and pt.t_srno='" & srno & "' "
+      Dim tmp As New List(Of SIS.DMISG.BOM)
+
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetBaaNConnectionString())
+        Con.Open()
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.Text
+          Cmd.CommandText = Sql
+          Dim rd As SqlDataReader = Cmd.ExecuteReader
+          While rd.Read
+            tmp.Add(New SIS.DMISG.BOM(rd))
+          End While
+        End Using
+      End Using
+      Return tmp
+    End Function
+
+    Public Shared Function GetBOM_Old(ByVal docn As String, ByVal revn As String, Optional Comp As String = "200") As List(Of SIS.DMISG.BOM)
       Dim Sql As String = ""
       Sql &= " select  "
       Sql &= "   dm.t_docn as DocumentID, "
@@ -59,6 +138,59 @@ Namespace SIS.DMISG
       Return tmp
     End Function
     Public Shared Function GetRefBOM(ByVal docn As String, ByVal revn As String, Optional Comp As String = "200") As List(Of SIS.DMISG.BOM)
+      Dim Sql As String = ""
+      Sql &= " select  "
+      Sql &= "   it.t_srno as SrNo, "
+      Sql &= "   it.t_item as ItemID, "
+      Sql &= "   it.t_dsca as ItemDescription, "
+      Sql &= "   it.t_qnty as ItemQuantity, "
+      Sql &= "   it.t_wght as ItemWeight, "
+      Sql &= "   it.t_cuni as ItemUnit  "
+      Sql &= " from tdmisg021" & Comp & " as it  "
+      Sql &= " where it.t_docn = '" & docn & "' and it.t_revn='" & revn & "' "
+      Dim tmp As New List(Of SIS.DMISG.BOM)
+
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetBaaNConnectionString())
+        Con.Open()
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.Text
+          Cmd.CommandText = Sql
+          Dim rd As SqlDataReader = Cmd.ExecuteReader
+          While rd.Read
+            tmp.Add(New SIS.DMISG.BOM(rd))
+          End While
+        End Using
+      End Using
+      Return tmp
+    End Function
+    Public Shared Function GetRefPBOM(ByVal docn As String, ByVal revn As String, ByVal srno As String, Optional Comp As String = "200") As List(Of SIS.DMISG.BOM)
+      Dim Sql As String = ""
+      Sql &= " select  "
+      Sql &= "   pt.t_prtn as PartItemID, "
+      Sql &= "   pt.t_prtd as PartDescription, "
+      Sql &= "   pt.t_spec as PartSpecification, "
+      Sql &= "   pt.t_size as PartSize, "
+      Sql &= "   pt.t_qnty as PartQuantity, "
+      Sql &= "   pt.t_wght as PartWeight,  "
+      Sql &= "   pt.t_rmrk as PartRemarks  "
+      Sql &= " from tdmisg022" & Comp & " as pt  "
+      Sql &= " where pt.t_docn = '" & docn & "' and pt.t_revn='" & revn & "' and pt.t_srno='" & srno & "' "
+      Dim tmp As New List(Of SIS.DMISG.BOM)
+
+      Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetBaaNConnectionString())
+        Con.Open()
+        Using Cmd As SqlCommand = Con.CreateCommand()
+          Cmd.CommandType = CommandType.Text
+          Cmd.CommandText = Sql
+          Dim rd As SqlDataReader = Cmd.ExecuteReader
+          While rd.Read
+            tmp.Add(New SIS.DMISG.BOM(rd))
+          End While
+        End Using
+      End Using
+      Return tmp
+    End Function
+    Public Shared Function GetRefBOM_old(ByVal docn As String, ByVal revn As String, Optional Comp As String = "200") As List(Of SIS.DMISG.BOM)
       Dim Sql As String = ""
       Sql &= " select  "
       Sql &= "   dm.t_docn as DocumentID, "
