@@ -114,6 +114,8 @@ Partial Class dmsExtractBOM
             For Each tmp As SIS.DMISG.BOM In tmpBoms
               With xlWS
                 c = 6
+                .Cells(r, c).Value = tmpDoc.ProjectID & "-" & tmp.ItemID.Trim
+                c += 1
                 .Cells(r, c).Value = tmp.ItemID
                 c += 1
                 .Cells(r, c).Value = tmp.ItemDescription
@@ -130,7 +132,7 @@ Partial Class dmsExtractBOM
               Dim tmpPBoms As List(Of SIS.DMISG.BOM) = SIS.DMISG.BOM.GetPBOM(DocumentID, dmtmp.RevisionNo, tmp.SrNo)
               For Each ptmp As SIS.DMISG.BOM In tmpPBoms
                 With xlWS
-                  c = 12
+                  c = 13
                   .Cells(r, c).Value = ptmp.PartItemID
                   c += 1
                   .Cells(r, c).Value = ptmp.PartDescription
@@ -152,6 +154,8 @@ Partial Class dmsExtractBOM
             For Each tmp As SIS.DMISG.BOM In tmpRefBoms
               With xlWS
                 c = 6
+                .Cells(r, c).Value = tmpDoc.ProjectID & "-" & tmp.ItemID.Trim
+                c += 1
                 .Cells(r, c).Value = tmp.ItemID
                 c += 1
                 .Cells(r, c).Value = tmp.ItemDescription
@@ -168,7 +172,7 @@ Partial Class dmsExtractBOM
               Dim tmpRefPBoms As List(Of SIS.DMISG.BOM) = SIS.DMISG.BOM.GetRefPBOM(DocumentID, dmtmp.RevisionNo, tmp.SrNo)
               For Each ptmp As SIS.DMISG.BOM In tmpRefPBoms
                 With xlWS
-                  c = 12
+                  c = 13
                   .Cells(r, c).Value = ptmp.PartItemID
                   c += 1
                   .Cells(r, c).Value = ptmp.PartDescription
@@ -238,6 +242,8 @@ Partial Class dmsExtractBOM
           For Each tmp As SIS.DMISG.BOM In tmpBoms
             With xlWS
               c = 6
+              .Cells(r, c).Value = tmpDoc.ProjectID & "-" & tmp.ItemID.Trim
+              c += 1
               .Cells(r, c).Value = tmp.ItemID
               c += 1
               .Cells(r, c).Value = tmp.ItemDescription
@@ -254,7 +260,7 @@ Partial Class dmsExtractBOM
             Dim tmpPBoms As List(Of SIS.DMISG.BOM) = SIS.DMISG.BOM.GetPBOM(doc.DocumentID, doc.RevisionNo, tmp.SrNo)
             For Each ptmp As SIS.DMISG.BOM In tmpPBoms
               With xlWS
-                c = 12
+                c = 13
                 .Cells(r, c).Value = ptmp.PartItemID
                 c += 1
                 .Cells(r, c).Value = ptmp.PartDescription
@@ -276,6 +282,8 @@ Partial Class dmsExtractBOM
           For Each tmp As SIS.DMISG.BOM In tmpRefBoms
             With xlWS
               c = 6
+              .Cells(r, c).Value = tmpDoc.ProjectID & "-" & tmp.ItemID.Trim
+              c += 1
               .Cells(r, c).Value = tmp.ItemID
               c += 1
               .Cells(r, c).Value = tmp.ItemDescription
@@ -292,7 +300,7 @@ Partial Class dmsExtractBOM
             Dim tmpRefPBoms As List(Of SIS.DMISG.BOM) = SIS.DMISG.BOM.GetRefPBOM(doc.DocumentID, doc.RevisionNo, tmp.SrNo)
             For Each ptmp As SIS.DMISG.BOM In tmpRefPBoms
               With xlWS
-                c = 12
+                c = 13
                 .Cells(r, c).Value = ptmp.PartItemID
                 c += 1
                 .Cells(r, c).Value = ptmp.PartDescription

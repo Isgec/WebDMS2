@@ -6,6 +6,7 @@ Imports System.ComponentModel
 Namespace SIS.DMISG
   <DataObject()>
   Public Class BOM
+    Public Property ProjectID As String = ""
     Public Property DocWeight As Decimal = 0.00
     Public Property DocumentID As String = ""
     Public Property RevisionNo As String = ""
@@ -26,6 +27,7 @@ Namespace SIS.DMISG
     Public Shared Function GetDoc(ByVal docn As String, ByVal revn As String, Optional Comp As String = "200") As SIS.DMISG.BOM
       Dim Sql As String = ""
       Sql &= " select top 1  "
+      Sql &= "   dm.t_cprj as ProjectID, "
       Sql &= "   dm.t_wght as DocWeight, "
       Sql &= "   dm.t_docn as DocumentID, "
       Sql &= "   dm.t_revn as RevisionNo, "
