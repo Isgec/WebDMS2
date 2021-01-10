@@ -1815,16 +1815,22 @@
             var mt = z.type + '|' + z.item;
             var fd = $("#myFileDownload");
 
-            fd.modal('show');
-            var url = 'App_Downloads/dmsExtractBOM.aspx?mt=' + mt;
-            $.fileDownload(url, {
-              successCallback: function (url) {
-                fd.modal('hide');
-              },
-              failCallback: function (responseHtml, url) {
-                fd.modal('hide');
-              }
-            });
+            //fd.modal('show');
+            //var url = 'App_Downloads/dmsExtractBOM.aspx?mt=' + mt;
+
+            var nam = 'wTask';
+            var url = self.location.href.replace('dmsMain.aspx', 'App_Downloads/dmsExtractBOM.aspx?mt=' + mt);
+            window.open(url, nam, 'left=20,top=20,width=100,height=60,toolbar=1,resizable=1,scrollbars=1');
+            return false;
+
+            //$.fileDownload(url, {
+            //  successCallback: function (url) {
+            //    fd.modal('hide');
+            //  },
+            //  failCallback: function (responseHtml, url) {
+            //    fd.modal('hide');
+            //  }
+            //});
             break;
           case 'Download Files':
           case 'Download':

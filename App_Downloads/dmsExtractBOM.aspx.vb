@@ -225,6 +225,11 @@ Partial Class dmsExtractBOM
 
         For Each doc As SIS.DMISG.TDocs In tmpDocs
           Dim tmpDoc As SIS.DMISG.BOM = SIS.DMISG.BOM.GetDoc(doc.DocumentID, doc.RevisionNo)
+          If tmpDoc Is Nothing Then
+            xlWS.Cells(r, 1).Value = doc.DocumentID & "_" & doc.RevisionNo & " NOT in dmisg001200."
+            r += 1
+            Continue For
+          End If
           With xlWS
             c = 1
             .Cells(r, c).Value = tmpDoc.DocumentID
@@ -323,26 +328,26 @@ Partial Class dmsExtractBOM
         xlPk.Dispose()
 
         Response.Clear()
-        Response.Cache.SetCacheability(HttpCacheability.NoCache)
+        'Response.Cache.SetCacheability(HttpCacheability.NoCache)
         Response.AppendHeader("content-disposition", "attachment; filename=" & DownloadName)
         Response.ContentType = SIS.SYS.Utilities.ApplicationSpacific.ContentType(DownloadName)
         Response.WriteFile(FileName)
-        Dim x As New System.Web.HttpCookie("fileDownload", "true")
-        x.Path = "/"
-        Response.AppendCookie(x)
+        'Dim x As New System.Web.HttpCookie("fileDownload", "true")
+        'x.Path = "/"
+        'Response.AppendCookie(x)
         Response.Flush()
         HttpContext.Current.Server.ScriptTimeout = st
         Response.End()
       End If
     Catch ex As Exception
-      Response.Clear()
-      Response.Cache.SetCacheability(HttpCacheability.NoCache)
-      Dim x As New System.Web.HttpCookie("fileDownload", "true")
-      x.Expires = DateTime.Now.AddYears(-1)
-      x.Path = "/"
-      Response.AppendCookie(x)
-      HttpContext.Current.Server.ScriptTimeout = st
-      Response.End()
+      'Response.Clear()
+      'Response.Cache.SetCacheability(HttpCacheability.NoCache)
+      'Dim x As New System.Web.HttpCookie("fileDownload", "true")
+      'x.Expires = DateTime.Now.AddYears(-1)
+      'x.Path = "/"
+      'Response.AppendCookie(x)
+      'HttpContext.Current.Server.ScriptTimeout = st
+      'Response.End()
     End Try
   End Sub
 
